@@ -36,7 +36,7 @@ def get_keys(s3_client, bucket, prefix=''):
 
 
 
-folders = get_folders(s3_client, bucket, prefix='Projects/')
+folders = get_folders(s3_client, bucket, prefix='Projects/%s/' % (sys.argv[1]))
 
 for folder in folders:
     keys = get_keys(s3_client, bucket, folder)

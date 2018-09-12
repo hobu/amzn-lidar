@@ -9,7 +9,7 @@ import sys
 
 bucket = 'usgs-lidar'
 queue = 'pdal-info'
-definition = 'info:4'
+definition = 'pdal-info:3'
 
 batch = boto3.client('batch', region_name='us-west-2')
 
@@ -22,7 +22,7 @@ name = key.split('.')[0].split('/')[-1]
 key = 's3://' + bucket + '/'+ key
 print (key, name)
 overrides = {
-	"memory": 2048,
+	"memory": 256,
 	'command': ['%s'%key]
     }
 

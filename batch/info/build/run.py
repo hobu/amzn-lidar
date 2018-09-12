@@ -31,6 +31,7 @@ os.environ['AWS_SECRET_ACCESS_KEY'] = role['SecretAccessKey']
 os.environ['AWS_REQUESTER_PAYS'] = "1"
 os.environ['AWS_REGION'] = 'us-west-2'
 os.environ['OUTPUT_BUCKET'] = 'usgs-lidar-pdal-metadata'
+os.environ['AWS_ALLOW_INSTANCE_PROFILE'] = '1'
 os.environ['HOME'] = '/tmp'
 #os.environ['CURL_VERBOSE'] = '1'
 

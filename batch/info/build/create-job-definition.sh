@@ -39,7 +39,7 @@ cat > ${TMPJOB} << EOF
         "user": ""
     },
     "retryStrategy": {
-        "attempts": 1
+        "attempts": 2
     },
     "timeout": {
         "attemptDurationSeconds": 60

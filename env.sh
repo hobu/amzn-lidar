@@ -7,7 +7,7 @@ unset AWS_PROFILE
 unset AWS_DEFAULT_REGION
 
 export AWS_DEFAULT_REGION="us-west-2"
-export AWS_PROFILE="amzn-lidar"
+#export AWS_PROFILE="amzn-lidar"
 
 unset  AWS_SESSION_TOKEN
 unset  AWS_SECRET_ACCESS_KEY

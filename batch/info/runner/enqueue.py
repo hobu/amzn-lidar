@@ -15,13 +15,17 @@ batch = boto3.client('batch', region_name='us-west-2')
 
 # key = 's3://' + bucket + '/'+ keys[0]
 
+import os
 
-key=sys.argv[1]
 MEMORY=256
 try:
-    MEMORY=sys.argv[2]
+    attempts=os.environ['AWS_BATCH_JOB_ATTEMPT']
+    if attempts > 1:
+        MEMORY = 2048
 except:
     pass
+
+key=sys.argv[1]
 
 name = key.split('.')[0].split('/')[-1]
 key = 's3://' + bucket + '/'+ key

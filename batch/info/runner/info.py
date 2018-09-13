@@ -62,7 +62,12 @@ def checkExists(key):
     return True
 
 def didFail(key):
-    jobid = table.get_item(Key={'Key':key})['jobId']
+    response = table.get_item(Key={'Key':key})
+    try:
+        response['jobId']
+    except KeyError:
+        return False
+    jobid = response['jobId']
     job = batch_client.describe_jobs(jobs=[jobid])
     for j in job['jobs']:
         if j['status'] == 'FAILED':

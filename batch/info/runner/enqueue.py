@@ -25,7 +25,6 @@ except:
 
 name = key.split('.')[0].split('/')[-1]
 key = 's3://' + bucket + '/'+ key
-print (key, name)
 overrides = {
 	"memory": 256,
 	'command': ['%s'%key]

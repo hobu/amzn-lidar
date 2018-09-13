@@ -47,7 +47,7 @@ def checkExists(key):
     bucket = 'usgs-lidar-pdal-metadata'
 
     try:
-        s3_client.head_object(bucket, key)
+        s3_client.head_object(Bucket=bucket, Key=key)
     except ClientError as e:
         if e.response['Error']['Code'] == "404":
             # The object does not exist.
@@ -67,7 +67,7 @@ for folder in folders:
 	print command
 
         EXISTS = checkExists(key+'.json')
-        WRITE = (not EXISTS)
+        WRITE = not EXISTS
         if OVERWRITE and EXISTS:
             WRITE = True
 

@@ -104,7 +104,7 @@ for folder in folders:
             dy = {}
             dy['jobId'] = response['jobId']
             dy['Key'] = key
-            table.put_item(dy)
+            table.put_item(Item=dy)
 
         else:
             print('key exists and not overwriting')

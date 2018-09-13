@@ -9,7 +9,7 @@ import sys
 
 bucket = 'usgs-lidar'
 queue = 'pdal-info'
-definition = 'pdal-info:3'
+definition = 'pdal-info:4'
 
 batch = boto3.client('batch', region_name='us-west-2')
 

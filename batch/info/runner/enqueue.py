@@ -34,5 +34,5 @@ response = batch.submit_job(jobName=name,
 			jobQueue=queue,
 			jobDefinition=definition,
 			containerOverrides=overrides)
-print (response)
+sys.stdout.write(json.dumps(json.loads(response)))
 

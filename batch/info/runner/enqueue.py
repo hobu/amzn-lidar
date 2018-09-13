@@ -9,29 +9,25 @@ import sys
 
 bucket = 'usgs-lidar'
 queue = 'pdal-info'
-definition = 'pdal-info:4'
+definition = 'pdal-info:3'
 
 batch = boto3.client('batch', region_name='us-west-2')
 
 # key = 's3://' + bucket + '/'+ keys[0]
 
-import os
-
-MEMORY=256
-try:
-    attempts=os.environ['AWS_BATCH_JOB_ATTEMPT']
-    if attempts > 1:
-        MEMORY = 2048
-except:
-    pass
 
 key=sys.argv[1]
+MEMORY=256
+try:
+    MEMORY=sys.argv[2]
+except:
+    pass
 
 name = key.split('.')[0].split('/')[-1]
 key = 's3://' + bucket + '/'+ key
 print (key, name)
 overrides = {
-	"memory": MEMORY,
+	"memory": 256,
 	'command': ['%s'%key]
     }
 

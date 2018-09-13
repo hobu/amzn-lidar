@@ -6,3 +6,7 @@ TAG=$(aws ecr describe-repositories| jq -r '.repositories[] | select( .repositor
 
 docker build --no-cache --pull -t $TAG .
 docker push $TAG
+
+$(./delete-job-queue.sh)
+$(./delete-batch-environment.sh)
+

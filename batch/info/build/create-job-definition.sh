@@ -7,8 +7,8 @@ JOB_NAME="pdal-info"
 CONTAINER="275986415235.dkr.ecr.us-west-2.amazonaws.com/info:latest"
 MEMORY="512"
 
-aws batch deregister-job-definition --job-definition $JOB_NAME
-sleep $WAITFORIT;
+#aws batch deregister-job-definition --job-definition $JOB_NAME
+#sleep $WAITFORIT;
 
 
 TMPJOB=$(mktemp /tmp/temporary-job.XXXXXXXX)
@@ -39,7 +39,7 @@ cat > ${TMPJOB} << EOF
         "user": ""
     },
     "retryStrategy": {
-        "attempts": 2
+        "attempts": 1
     },
     "timeout": {
         "attemptDurationSeconds": 60

@@ -6,12 +6,6 @@ source ../../../env.sh
 ENVIRONMENT="pdal-info"
 
 
-aws batch update-compute-environment --compute-environment $ENVIRONMENT --state DISABLED
-
-# wait for it to take effect
-sleep $WAITFORIT
-aws batch delete-compute-environment --compute-environment $ENVIRONMENT
-
 TMPENV=$(mktemp /tmp/temporary-batch-enviro.XXXXXXXX)
 cat > ${TMPENV} << EOF
 {
@@ -24,12 +18,11 @@ cat > ${TMPENV} << EOF
         "maxvCpus": 256,
         "desiredvCpus": 0,
         "instanceTypes": [
-            "c5.18xlarge",
-            "c5.9xlarge",
-            "c5.4xlarge",
-            "c5.2xlarge",
-            "c5.xlarge",
-            "c5.large"
+            "c5d.9xlarge",
+            "c5d.4xlarge",
+            "c5d.2xlarge",
+            "c5d.xlarge",
+            "c5d.large"
         ],
         "imageId": "",
         "subnets": [

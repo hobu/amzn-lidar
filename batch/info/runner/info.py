@@ -10,6 +10,10 @@ import sys
 
 bucket = 'usgs-lidar'
 s3_client = boto3.client('s3')
+batch_client = boto3.client('batch')
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('pdal-info')
 
 
 OVERWRITE=False
@@ -57,6 +61,14 @@ def checkExists(key):
             raise
     return True
 
+def didFail(key):
+    jobid = table.get_item(Key={'Key':key})['jobId']
+    job = batch_client.describe_jobs(jobs=[jobid])
+    for j in job['jobs']:
+        if j['status'] == 'FAILED':
+            return True
+    return False
+
 folders = get_folders(s3_client, bucket, prefix='Projects/%s/' % (sys.argv[1]))
 
 for folder in folders:
@@ -65,11 +77,16 @@ for folder in folders:
 
         command = ['python','enqueue.py', key ]
 	print command
+        FAILED = didFail(key)
 
         EXISTS = checkExists(key+'.json')
-        WRITE = not EXISTS
         if OVERWRITE and EXISTS:
             WRITE = True
+        elif FAILED:
+            command.append('2048') # re-run with more memory
+            WRITE=True
+        else:
+            WRITE = not EXISTS
 
         if WRITE:
             p = subprocess.Popen(command,
@@ -78,6 +95,12 @@ for folder in folders:
             out, err = p.communicate()
             if (err):
                 print (err)
+            response = json.loads(out)
+            dy = {}
+            dy['jobId'] = response['jobId']
+            dy['Key'] = key
+            table.put_item(dy)
+
         else:
             print('key exists and not overwriting')
 	#sys.exit()

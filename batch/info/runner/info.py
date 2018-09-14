@@ -64,10 +64,10 @@ def checkExists(key):
 def didFail(key):
     response = table.get_item(Key={'Key':key})
     try:
-        response['jobId']
+        response['Item']['jobId']
     except KeyError:
         return False
-    jobid = response['jobId']
+    jobid = response['Item']['jobId']
     job = batch_client.describe_jobs(jobs=[jobid])
     for j in job['jobs']:
         if j['status'] == 'FAILED':

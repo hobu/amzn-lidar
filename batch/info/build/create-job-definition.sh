@@ -3,9 +3,9 @@
 
 source ../../../env.sh
 
-JOB_NAME="pdal-info"
+JOB_NAME="pdal-info-big"
 CONTAINER="275986415235.dkr.ecr.us-west-2.amazonaws.com/info:latest"
-MEMORY="512"
+MEMORY="4096"
 
 #aws batch deregister-job-definition --job-definition $JOB_NAME
 #sleep $WAITFORIT;
@@ -42,7 +42,7 @@ cat > ${TMPJOB} << EOF
         "attempts": 1
     },
     "timeout": {
-        "attemptDurationSeconds": 60
+        "attemptDurationSeconds": 360
     }
 }
 EOF

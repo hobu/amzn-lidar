@@ -45,6 +45,9 @@ except KeyError:
 # docker pull 275986415235.dkr.ecr.us-west-2.amazonaws.com/info:latest
 # docker run 275986415235.dkr.ecr.us-west-2.amazonaws.com/info:latest s3://usgs-lidar/Projects/US_MexicanBorder_UTM14_2007/laz/US_MexicanBorder_UTM14_2007_000116.laz
 
+input_bucket = input_file.split('/')[:3][2]
+out_key = input_file.replace('s3://'+input_bucket+'/','')
+
 command = ['pdal','info',
                   input_file,
                   '--all',
@@ -53,14 +56,16 @@ p = subprocess.Popen(command,
                      stdout=subprocess.PIPE,
                      stderr=subprocess.PIPE)
 out, err = p.communicate()
-pdal = json.loads(out)
 
-
-input_bucket = input_file.split('/')[:3][2]
-out_key = input_file.replace('s3://'+input_bucket+'/','')+'.json'
-
-bucket = s3.Bucket(output_bucket).put_object(Key=out_key,
-        Body=json.dumps(pdal), ContentType='application/json')
-
-
+if out:
+    pdal = json.loads(out)
+    bucket = s3.Bucket(output_bucket).put_object(Key=out_key+'.json',
+            Body=json.dumps(pdal), ContentType='application/json')
+else:
+    dynamodb = boto3.resource('dynamodb', region_name=os.environ['AWS_REGION'])
+    table = dynamodb.Table('pdal-info-error')
+    dy = {}
+    dy['error'] = err
+    dy['Key'] = out_key
+    table.put_item(Item=dy)
 

@@ -9,5 +9,4 @@ aws batch update-job-queue --job-queue $ENVIRONMENT --state DISABLED
 sleep $WAITFORIT;
 
 aws batch delete-job-queue --job-queue $ENVIRONMENT
-sleep $WAITFORIT;
 

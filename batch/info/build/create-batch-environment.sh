@@ -24,7 +24,7 @@ cat > ${TMPENV} << EOF
             "c5d.xlarge",
             "c5d.large"
         ],
-        "imageId": "",
+        "imageId": "ami-07b7e968c0d4eda53",
         "subnets": [
             "subnet-04e6aab22265aab97",
             "subnet-05eb13a66a3f56abd",

@@ -7,7 +7,8 @@ import os
 import boto3
 from botocore.errorfactory import ClientError
 import sys
-
+from multiprocessing.pool import ThreadPool
+from functools import partial
 bucket = 'usgs-lidar'
 s3_client = boto3.client('s3')
 batch_client = boto3.client('batch')
@@ -17,6 +18,7 @@ table = dynamodb.Table('pdal-info')
 
 
 OVERWRITE=False
+THREADS=10
 try:
     sys.argv[2]
     OVERWRITE=True
@@ -74,41 +76,38 @@ def didFail(key):
             return True
     return False
 
-folders = get_folders(s3_client, bucket, prefix='Projects/%s/' % (sys.argv[1]))
+def write(key):
+    command = ['python','enqueue.py', key ]
+    print command
+    FAILED = didFail(key)
+    EXISTS = checkExists(key+'.json')
+    if OVERWRITE and EXISTS:
+        WRITE = not EXISTS
+
+    if WRITE:
+        p = subprocess.Popen(command,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if (err):
+            print (err)
+        response = json.loads(out)
+        dy = {}
+        dy['jobId'] = response['jobId']
+        dy['Key'] = key
+        table.put_item(Item=dy)
+    else:
+        print('key exists and not overwriting')
+
+
+folders = get_folders(s3_client, bucket, prefix='Projects/' )
 
 for folder in folders:
     keys = get_keys(s3_client, bucket, folder)
-    for key in keys:
+    pool = ThreadPool(THREADS)
 
-        command = ['python','enqueue.py', key ]
-	print command
-        FAILED = didFail(key)
+    results = pool.map(partial(write), keys)
 
-        EXISTS = checkExists(key+'.json')
-        if OVERWRITE and EXISTS:
-            WRITE = True
-        elif FAILED:
-            command.append('2048') # re-run with more memory
-            WRITE=True
-        else:
-            WRITE = not EXISTS
-
-        if WRITE:
-            p = subprocess.Popen(command,
-                                  stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE)
-            out, err = p.communicate()
-            if (err):
-                print (err)
-            response = json.loads(out)
-            dy = {}
-            dy['jobId'] = response['jobId']
-            dy['Key'] = key
-            table.put_item(Item=dy)
-
-        else:
-            print('key exists and not overwriting')
-	#sys.exit()
 
 
 #print (list(gen_folders))

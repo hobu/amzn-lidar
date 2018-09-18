@@ -15,7 +15,7 @@ cat > ${TMPENV} << EOF
     "computeResources": {
         "type": "SPOT",
         "minvCpus": 0,
-        "maxvCpus": 256,
+        "maxvCpus": 768,
         "desiredvCpus": 0,
         "instanceTypes": [
             "c5d.9xlarge",

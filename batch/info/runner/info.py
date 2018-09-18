@@ -12,6 +12,8 @@ from functools import partial
 bucket = 'usgs-lidar'
 s3_client = boto3.client('s3')
 batch_client = boto3.client('batch')
+sqs_client = boto3.resource('sqs')
+
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('pdal-info')
@@ -86,17 +88,21 @@ def write(key):
         WRITE = True
 
     if WRITE:
-        p = subprocess.Popen(command,
-                              stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE)
-        out, err = p.communicate()
-        if (err):
-            print (err)
-        response = json.loads(out)
-        dy = {}
-        dy['jobId'] = response['jobId']
-        dy['Key'] = key
-        table.put_item(Item=dy)
+
+
+        queue = sqs_client.get_queue_by_name(QueueName='pdal-info')
+        response = queue.send_message(MessageBody=key)
+#         p = subprocess.Popen(command,
+#                               stdout=subprocess.PIPE,
+#                               stderr=subprocess.PIPE)
+#         out, err = p.communicate()
+#         if (err):
+#             print (err)
+#         response = json.loads(out)
+#         dy = {}
+#         dy['jobId'] = response['jobId']
+#         dy['Key'] = key
+#         table.put_item(Item=dy)
     else:
         print('key exists and not overwriting')
 

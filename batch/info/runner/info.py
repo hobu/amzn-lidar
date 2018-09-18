@@ -18,7 +18,7 @@ table = dynamodb.Table('pdal-info')
 
 
 OVERWRITE=False
-THREADS=10
+THREADS=25
 try:
     sys.argv[2]
     OVERWRITE=True
@@ -81,8 +81,9 @@ def write(key):
     print command
     FAILED = didFail(key)
     EXISTS = checkExists(key+'.json')
-    if OVERWRITE and EXISTS:
-        WRITE = not EXISTS
+    WRITE = not EXISTS
+    if OVERWRITE:
+        WRITE = True
 
     if WRITE:
         p = subprocess.Popen(command,

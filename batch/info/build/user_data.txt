@@ -1,0 +1,2 @@
+mkswap /dev/nvme2n1
+swapon /dev/nvme2n1

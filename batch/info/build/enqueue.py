@@ -108,8 +108,9 @@ def write(key):
 
 
 try:
-    path='Projects/'+sys.argv[2]+'/'
-except:
+    prefix='Projects/'+sys.argv[1]+'/'
+except :
+    import pdb;pdb.set_trace()
     prefix='Projects/'
 
 folders = get_folders(s3_client, bucket, prefix=prefix)
@@ -123,5 +124,7 @@ for folder in folders:
 
 
 #print (list(gen_folders))
+
+
 
 

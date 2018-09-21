@@ -1,2 +1,40 @@
+#c5d.18xlarge userdata
+apt-get update -y && apt-get install htop screen python3-pip git awscli jq -y
+pip3 install boto3
+
+wget -qO- https://get.docker.com/ | sh
+usermod -aG docker ubuntu
+pip install docker-compose
+
+# ExecStart= needs a space after to reset
+DOCKER_SETTINGS="[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -g /mnt"
+
+mkdir /etc/systemd/system/docker.service.d/
+echo -e "$DOCKER_SETTINGS" >> /etc/systemd/system/docker.service.d/docker.conf
+
+
+
+
 mkswap /dev/nvme2n1
 swapon /dev/nvme2n1
+
+echo "/dev/nvme2n1       none    swap    sw  0       0" >> /etc/fstab
+echo "/dev/nvme2n2       none    swap    sw  0       0" >> /etc/fstab
+mkfs -t ext4 /dev/nvme1n1
+mount /dev/nvme1n1 /mnt
+echo "/dev/nvme1n1 /mnt ext4 noatime,nodiratime,data=writeback,barrier=0,nobh,errors=remount-ro 0 1" >> /etc/fstab
+
+systemctl daemon-reload
+systemctl restart docker
+
+runit() {
+    echo "su -  ubuntu -c '$1'"
+    eval "su -  ubuntu -c '$1'"
+}
+
+
+
+runit "git clone https://github.com/hobu/amzn-lidar.git"
+runit "cd /home/ubuntu/amzn-lidar; source  env.sh; docker pull 275986415235.dkr.ecr.us-west-2.amazonaws.com/info"

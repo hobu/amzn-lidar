@@ -10,9 +10,9 @@ import subprocess
 import concurrent.futures
 BUCKET='usgs-lidar'
 CONTAINER='275986415235.dkr.ecr.us-west-2.amazonaws.com/info'
-THREADS=15
+THREADS=70
 BATCH_SIZE=10
-DOIT = False
+DOIT = True
 
 sqs = boto3.resource('sqs', region_name='us-west-2')
 sqs_client = boto3.client('sqs', region_name='us-west-2')
@@ -82,7 +82,7 @@ with concurrent.futures.ProcessPoolExecutor(max_workers=THREADS) as executor:
 
         if (len(futures) == THREADS):
             print ('I am here')
-            wait(futures)
+            as_completed(futures)
             futures = []
 
         future = executor.submit(task, resp)

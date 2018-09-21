@@ -20,7 +20,7 @@ table = dynamodb.Table('pdal-info')
 
 
 OVERWRITE=False
-THREADS=25
+THREADS=150
 try:
     sys.argv[2]
     OVERWRITE=True
@@ -81,7 +81,7 @@ def didFail(key):
 def write(key):
     command = ['python','enqueue.py', key ]
     print command
-    FAILED = didFail(key)
+#     FAILED = didFail(key)
     EXISTS = checkExists(key+'.json')
     WRITE = not EXISTS
     if OVERWRITE:
@@ -106,20 +106,27 @@ def write(key):
     else:
         print('key exists and not overwriting')
 
+prefix='Projects/'
 
-try:
-    prefix='Projects/'+sys.argv[1]+'/'
-except :
-    import pdb;pdb.set_trace()
-    prefix='Projects/'
+pool = ThreadPool(THREADS)
+keys = sys.argv[1:]
 
-folders = get_folders(s3_client, bucket, prefix=prefix)
+if not len(keys):
+    keys.append(None)
 
-for folder in folders:
-    keys = get_keys(s3_client, bucket, folder)
-    pool = ThreadPool(THREADS)
+for basekey in keys:
+    if basekey:
+        basekey = basekey.replace('/','')
+    else:
+        basekey = prefix
 
-    results = pool.map(partial(write), keys)
+
+    folders = get_folders(s3_client, bucket, prefix=prefix)
+
+    for folder in folders:
+        keys = get_keys(s3_client, bucket, folder)
+
+        results = pool.map(partial(write), keys)
 
 
 

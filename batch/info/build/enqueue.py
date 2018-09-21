@@ -80,7 +80,7 @@ def didFail(key):
 
 def write(key):
     command = ['python','enqueue.py', key ]
-    print command
+    print (command)
 #     FAILED = didFail(key)
     EXISTS = checkExists(key+'.json')
     WRITE = not EXISTS

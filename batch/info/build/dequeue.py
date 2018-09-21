@@ -82,7 +82,7 @@ with concurrent.futures.ProcessPoolExecutor(max_workers=THREADS) as executor:
 
         if (len(futures) == THREADS):
             print ('I am here')
-            as_completed(futures)
+            wait(futures)
             futures = []
 
         future = executor.submit(task, resp)

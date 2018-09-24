@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #c5d.18xlarge userdata
 apt-get update -y && apt-get install htop screen python3-pip git awscli jq -y
 pip3 install boto3

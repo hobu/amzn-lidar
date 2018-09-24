@@ -1,0 +1,47 @@
+{
+        "EbsOptimized": true,
+        "IamInstanceProfile": {
+            "Arn": "arn:aws:iam::275986415235:instance-profile/ecsInstanceRole"
+        },
+        "BlockDeviceMappings": [
+            {
+                "DeviceName": "/dev/sda1",
+                "Ebs": {
+                    "DeleteOnTermination": true,
+                    "VolumeSize": 8,
+                    "VolumeType": "gp2"
+                }
+            }
+        ],
+        "NetworkInterfaces": [
+            {
+                "AssociatePublicIpAddress": true,
+                "DeleteOnTermination": true,
+                "Description": "",
+                "DeviceIndex": 0,
+                "Groups": [
+                    "sg-0d45a196445af095f"
+                ],
+                "Ipv6Addresses": []
+            }
+        ],
+        "ImageId": "ami-702d7f08",
+        "InstanceType": "c5d.18xlarge",
+        "KeyName": "amzn-lidar-proc",
+        "UserData": "$USERDATA",
+        "Monitoring": {
+            "Enabled": false
+        },
+        "InstanceMarketOptions": {
+            "MarketType": "spot",
+            "SpotOptions": {
+                "MaxPrice": "1.250000",
+                "SpotInstanceType": "one-time",
+                "InstanceInterruptionBehavior": "terminate"
+            }
+        },
+        "CpuOptions": {
+            "CoreCount": 36,
+            "ThreadsPerCore": 2
+        }
+    }

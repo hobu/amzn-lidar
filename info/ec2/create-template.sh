@@ -1,8 +1,6 @@
 #!/bin/bash
 
 
-#source ../../../env.sh
-
 ENVIRONMENT="pdal-info"
 
 aws ec2 delete-launch-template --launch-template-name "$ENVIRONMENT"

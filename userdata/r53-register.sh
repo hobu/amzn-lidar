@@ -45,7 +45,7 @@ cat > ${TMPADDS} << EOF
                 {
                         "Action": "UPSERT",
                         "ResourceRecordSet": {
-                                "Name": "$DNS_INTERNAL-internal.$ZONE",
+                                "Name": "$DNS_INTERNAL.$ZONE",
                                 "Type": "A",
                                 "TTL": 60,
                                 "ResourceRecords": [{

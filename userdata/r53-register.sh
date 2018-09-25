@@ -28,7 +28,7 @@ echo $PUBLIC_IPV4
 echo $LOCAL_IPV4
 
 TMPADDS=$(mktemp /tmp/temporary-file.XXXXXXXX)
-cat > ${TMPADDS} << "EOF"
+cat > ${TMPADDS} << EOF
 {
         "Comment": "CREATE",
         "Changes": [{

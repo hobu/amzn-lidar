@@ -39,4 +39,4 @@ runit() {
 
 
 runit "git clone https://github.com/hobu/amzn-lidar.git"
-runit "cd /home/ubuntu/amzn-lidar; source  env.sh; docker pull 275986415235.dkr.ecr.us-west-2.amazonaws.com/info"
+runit "cd /home/ubuntu/amzn-lidar; ./init.sh"

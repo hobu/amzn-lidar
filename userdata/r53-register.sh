@@ -2,9 +2,6 @@
 
 # Assign route 53 based on instance tagso
 
-sudo yum update -y;
-sudo yum install python-pip27 jq
-sudo pip install awscli
 
 IDENTITY=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document)
 REGION=$(echo $IDENTITY | jq -r .region)

@@ -26,7 +26,7 @@
             }
         ],
         "ImageId": "ami-702d7f08",
-        "InstanceType": "c5d.18xlarge",
+        "InstanceType": "c5d.9xlarge",
         "KeyName": "amzn-lidar-proc",
         "UserData": "$USERDATA",
         "Monitoring": {
@@ -35,13 +35,13 @@
         "InstanceMarketOptions": {
             "MarketType": "spot",
             "SpotOptions": {
-                "MaxPrice": "1.250000",
+                "MaxPrice": "0.850000",
                 "SpotInstanceType": "one-time",
                 "InstanceInterruptionBehavior": "terminate"
             }
         },
         "CpuOptions": {
-            "CoreCount": 36,
+            "CoreCount": 18,
             "ThreadsPerCore": 2
         }
     }

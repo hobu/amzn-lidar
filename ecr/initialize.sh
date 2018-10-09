@@ -8,7 +8,7 @@ function initialize
    repository=$1
    output=$(aws ecr create-repository --repository-name "$repository" )
    echo "created repository $repository"
-   policy=$(cat ./policies/ecr-policy.json)
+   policy=$(cat ../policies/ecr-policy.json)
    output=$(aws ecr set-repository-policy --repository-name "$repository" --policy-text "$policy")
    repositories=$(aws ecr describe-repositories | jq -r .repositories[].repositoryName | tr " " "\n")
    echo "create: $output"
@@ -43,3 +43,5 @@ list_repositories
 wipe_repository "pdal"
 
 initialize "info"
+initialize "coordinator"
+initialize "worker"

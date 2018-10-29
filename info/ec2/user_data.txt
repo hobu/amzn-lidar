@@ -19,7 +19,10 @@ ExecStart=/usr/bin/dockerd -g /mnt"
 mkdir /etc/systemd/system/docker.service.d/
 echo -e "$DOCKER_SETTINGS" >> /etc/systemd/system/docker.service.d/docker.conf
 
-AWSLOGS="[/var/log/syslog]
+AWSLOGS="[general]
+state_file = /var/awslogs/state/agent-state
+
+[/var/log/syslog]
 datetime_format = %b %d %H:%M:%S
 file = /var/log/syslog
 buffer_duration = 5000
@@ -37,9 +40,9 @@ log_group_name = info-dequeue
 
 "
 
-echo -e "$AWSLOGS" >> /var/awslogs/etc/awslogs.conf
+echo -e "$AWSLOGS" >> awslogs.conf
 curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
-python awslogs-agent-setup.py --region us-west-2 -c /var/awslogs/etc/awslogs.conf
+python awslogs-agent-setup.py --region us-west-2 -c awslogs.conf -n
 
 touch /mnt/deqlog.log
 chown ubuntu:ubuntu /mnt/deqlog.log
@@ -63,3 +66,4 @@ runit() {
 
 runit "git clone https://github.com/hobu/amzn-lidar.git"
 runit "cd /home/ubuntu/amzn-lidar; ./init.sh"
+/sbin/shutdown -h now

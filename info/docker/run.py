@@ -34,7 +34,7 @@ def refresh_tokens():
     os.environ['AWS_REGION'] = 'us-west-2'
     os.environ['OUTPUT_BUCKET'] = 'usgs-lidar-pdal-metadata'
     os.environ['AWS_ALLOW_INSTANCE_PROFILE'] = '1'
-    os.environ['HOME'] = '/tmp'
+    os.environ['HOME'] = '/mnt/pdalinfo'
     #os.environ['CURL_VERBOSE'] = '1'
 
 try:

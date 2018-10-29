@@ -60,7 +60,12 @@ def task(message):
         sys.exit()
     except KeyError:
         keys[key] = 1
-    command = ['docker','run', '--rm', CONTAINER, full_key]
+    command = ['docker','run', '--rm',
+                '--log-driver=awslogs',
+                '--log-opt awslogs-region=us-west-2',
+                '--log-opt awslogs-group=pdalinfo',
+                '--log-opt awslogs-create-group=true',
+                CONTAINER, full_key]
     print (command, "Task Executed {}".format(threading.current_thread()))
     if DOIT:
         p = subprocess.Popen(command,

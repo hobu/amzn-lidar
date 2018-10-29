@@ -60,7 +60,7 @@ def task(message):
         sys.exit()
     except KeyError:
         keys[key] = 1
-    command = ['docker','run', CONTAINER, full_key]
+    command = ['docker','run', '--rm', CONTAINER, full_key]
     print (command, "Task Executed {}".format(threading.current_thread()))
     if DOIT:
         p = subprocess.Popen(command,

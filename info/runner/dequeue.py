@@ -10,7 +10,7 @@ import subprocess
 import concurrent.futures
 BUCKET='usgs-lidar'
 CONTAINER='275986415235.dkr.ecr.us-west-2.amazonaws.com/info'
-THREADS=80
+THREADS=1
 BATCH_SIZE=10
 DOIT = True
 

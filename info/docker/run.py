@@ -20,20 +20,22 @@ except KeyError:
 
 s3 = boto3.resource('s3')
 
-url = 'http://169.254.169.254/latest/meta-data/iam/security-credentials/ecsInstanceRole'
-role = requests.get(url).text
 
-role = json.loads(role)
+def refresh_tokens():
+    url = 'http://169.254.169.254/latest/meta-data/iam/security-credentials/ecsInstanceRole'
+    role = requests.get(url).text
 
-os.environ['AWS_ACCESS_KEY_ID'] = role['AccessKeyId']
-os.environ['AWS_SESSION_TOKEN'] = role['Token']
-os.environ['AWS_SECRET_ACCESS_KEY'] = role['SecretAccessKey']
-os.environ['AWS_REQUESTER_PAYS'] = "1"
-os.environ['AWS_REGION'] = 'us-west-2'
-os.environ['OUTPUT_BUCKET'] = 'usgs-lidar-pdal-metadata'
-os.environ['AWS_ALLOW_INSTANCE_PROFILE'] = '1'
-os.environ['HOME'] = '/tmp'
-#os.environ['CURL_VERBOSE'] = '1'
+    role = json.loads(role)
+
+    os.environ['AWS_ACCESS_KEY_ID'] = role['AccessKeyId']
+    os.environ['AWS_SESSION_TOKEN'] = role['Token']
+    os.environ['AWS_SECRET_ACCESS_KEY'] = role['SecretAccessKey']
+    os.environ['AWS_REQUESTER_PAYS'] = "1"
+    os.environ['AWS_REGION'] = 'us-west-2'
+    os.environ['OUTPUT_BUCKET'] = 'usgs-lidar-pdal-metadata'
+    os.environ['AWS_ALLOW_INSTANCE_PROFILE'] = '1'
+    os.environ['HOME'] = '/tmp'
+    #os.environ['CURL_VERBOSE'] = '1'
 
 try:
 
@@ -48,6 +50,9 @@ except KeyError:
 input_bucket = input_file.split('/')[:3][2]
 out_key = input_file.replace('s3://'+input_bucket+'/','')
 
+
+refresh_tokens()
+
 command = ['pdal','info',
                   input_file,
                   '--all',
@@ -59,6 +64,7 @@ out, err = p.communicate()
 
 if out:
     pdal = json.loads(out)
+    refresh_tokens()
     bucket = s3.Bucket(output_bucket).put_object(Key=out_key+'.json',
             Body=json.dumps(pdal), ContentType='application/json')
 else:

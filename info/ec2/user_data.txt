@@ -51,5 +51,5 @@ runit() {
 
 
 runit "git clone https://github.com/hobu/amzn-lidar.git"
-#runit "cd /home/ubuntu/amzn-lidar; ./init.sh"
+runit "cd /home/ubuntu/amzn-lidar; ./init.sh"
 #/sbin/shutdown -h now

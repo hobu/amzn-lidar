@@ -1,12 +1,15 @@
 #!/bin/bash
 
-#c5d.18xlarge userdata
-apt-get update -y && apt-get install htop screen python3-pip git awscli jq -y
-pip3 install boto3
+#c5d.9xlarge userdata us-west-2
+mkfs -t ext4 /dev/nvme0n1
+mount /dev/nvme0n1 /mnt
+echo "/dev/nvme0n1 /mnt ext4 noatime,nodiratime,data=writeback,barrier=0,nobh,errors=remount-ro 0 1" >> /etc/fstab
+
+apt-get update -y && apt-get install htop screen python3-pip git awscli jq python -y
+pip3 install boto3 docker-compose
 
 wget -qO- https://get.docker.com/ | sh
 usermod -aG docker ubuntu
-pip install docker-compose
 
 # ExecStart= needs a space after to reset
 DOCKER_SETTINGS="[Service]
@@ -16,17 +19,37 @@ ExecStart=/usr/bin/dockerd -g /mnt"
 mkdir /etc/systemd/system/docker.service.d/
 echo -e "$DOCKER_SETTINGS" >> /etc/systemd/system/docker.service.d/docker.conf
 
+AWSLOGS="[/var/log/syslog]
+datetime_format = %b %d %H:%M:%S
+file = /var/log/syslog
+buffer_duration = 5000
+log_stream_name = {instance_id}
+initial_position = end_of_file
+log_group_name = /var/log/syslog
+
+[/mnt/deqlog.log]
+datetime_format = %b %d %H:%M:%S
+file = /mnt/deqlog.log
+buffer_duration = 5000
+log_stream_name = {instance_id}
+initial_position = end_of_file
+log_group_name = info-dequeue
+
+"
+
+echo -e "$AWSLOGS" >> /var/awslogs/etc/awslogs.conf
+curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O
+python awslogs-agent-setup.py --region us-west-2 -c /var/awslogs/etc/awslogs.conf
+
+touch /mnt/deqlog.log
+chown ubuntu:ubuntu /mnt/deqlog.log
 
 
+#mkswap /dev/nvme2n1
+#swapon /dev/nvme2n1
 
-mkswap /dev/nvme2n1
-swapon /dev/nvme2n1
-
-echo "/dev/nvme2n1       none    swap    sw  0       0" >> /etc/fstab
-echo "/dev/nvme2n2       none    swap    sw  0       0" >> /etc/fstab
-mkfs -t ext4 /dev/nvme1n1
-mount /dev/nvme1n1 /mnt
-echo "/dev/nvme1n1 /mnt ext4 noatime,nodiratime,data=writeback,barrier=0,nobh,errors=remount-ro 0 1" >> /etc/fstab
+#echo "/dev/nvme2n1       none    swap    sw  0       0" >> /etc/fstab
+#echo "/dev/nvme2n2       none    swap    sw  0       0" >> /etc/fstab
 
 systemctl daemon-reload
 systemctl restart docker
